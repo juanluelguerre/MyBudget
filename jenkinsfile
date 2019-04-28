@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout git repo') {
+        stage('Checkout git repo (DEV)') {
             steps {
                 git branch: 'master', url: params.GIT_REPO
             }
@@ -9,7 +9,7 @@ pipeline {
         
         stage('Build and Publish') {
             steps {
-             sh(script: "dotnet publish MyBudget.sln -c Release", returnStdout: true)
+                sh(script: "dotnet publish MyBudget.sln -c Release", returnStdout: true)
             }
         }
         
@@ -23,9 +23,9 @@ pipeline {
         }
         
         stage('Deploy to Azure (PROD)') {
-            when {
-                branch 'master'
-            }    
+            //when {
+            //    branch 'master'
+            //}    
             steps {
                 input 'Do you approve deployment to PRO?'
                 
