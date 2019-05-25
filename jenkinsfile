@@ -31,7 +31,7 @@ pipeline {
                 
                 azureWebAppPublish azureCredentialsId: params.AZURE_CREDENTIAL_ID, 
                 resourceGroup: params.RESOURCE_GROUP, 
-                appName: params.APP_NAME, 
+                appName: params.APP_NAME_PROD, 
                 sourceDirectory: "MyBudget/bin/Release/netcoreapp2.2/publish/"
             }
         }        
