@@ -22,7 +22,7 @@ namespace MyBudget.Api.Controllers
 		}
 
 		[HttpGet]
-		[Produces(typeof(IEnumerable<CustomerAllQueryResult>))]
+		[Produces(typeof(IEnumerable<CustomerAllViewModel>))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> Get()
@@ -32,7 +32,7 @@ namespace MyBudget.Api.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[Produces(typeof(CustomerByIdQueryResult))]
+		[Produces(typeof(CustomerByIdViewModel))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> Get(int id)

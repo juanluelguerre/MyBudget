@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyBudget.Api.Application.Customers.Queries
 {
-	public class CustomerByIdQueryResult
+	public class CustomerByIdViewModel
 	{
 		[Required]
 		public int Id { get; set; }
@@ -16,7 +16,7 @@ namespace MyBudget.Api.Application.Customers.Queries
 		public string BankAccount { get; set; }
 		public bool Active { get; set; }
 
-		public CustomerByIdQueryResult(int id, string firstName, string lastName, DateTime? customerFrom, string bankAccount, bool active)
+		public CustomerByIdViewModel(int id, string firstName, string lastName, DateTime? customerFrom, string bankAccount, bool active)
 		{
 			Id = id;
 			FirstName = firstName ?? throw new ArgumentNullException(nameof(firstName));

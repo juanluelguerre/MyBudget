@@ -2,7 +2,7 @@
 
 namespace MyBudget.Api.Application.Customers.Aggregates
 {
-	public class Entity
+	public class AggregateRoot
 	{
 		[Key]
 		public int Id { get; set; }

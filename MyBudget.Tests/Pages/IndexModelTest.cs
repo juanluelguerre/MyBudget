@@ -1,4 +1,4 @@
-using MyBudget.Pages;
+using MyBudget.Web.Pages;
 using Xunit;
 
 namespace MyBudget.Tests

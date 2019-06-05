@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyBudget\MyBudget.csproj" />
+    <ProjectReference Include="..\MyBudget\MyBudget.Web.csproj" />
   </ItemGroup>
 
 </Project>

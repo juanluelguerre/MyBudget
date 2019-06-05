@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace MyBudget.Pages
+namespace MyBudget.Web.Pages
 {
 	public class PrivacyModel : PageModel
 	{

@@ -4,7 +4,7 @@ using MyBudget.Api.Application.Customers.Data;
 
 namespace MyBudget.Api.Application.Customers.Infrastructure
 {
-	public class DataRepository<T> : IDataRepository<T> where T: Entity
+	public class DataRepository<T> : IDataRepository<T> where T: AggregateRoot
 	{
 		private DataContext _context;
 

@@ -3,10 +3,12 @@ using Microsoft.Extensions.Logging;
 using MyBudget.Api.Application.Customers.Aggregates;
 using MyBudget.Api.Application.Customers.Infrastructure;
 using MyBudget.Api.Application.Events;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyBudget.Api.Application.Customers.Commands
 {
-	public class CustomerAddCommandHandler : RequestHandler<CustomerAddCommand, bool>
+	public class CustomerAddCommandHandler : IRequestHandler<CustomerAddCommand, bool>
 	{
 		private readonly ILogger _logger;
 		private readonly IDataRepository<Customer> _repository;
@@ -19,17 +21,27 @@ namespace MyBudget.Api.Application.Customers.Commands
 			_mediator = mediator;
 		}
 
-		protected override bool Handle(CustomerAddCommand request)
+		public async Task<bool> Handle(CustomerAddCommand command, CancellationToken cancellationToken)
 		{
-			_logger.LogInformation($"Handle({nameof(CustomerAddCommandHandler)}) -> {request}");
+			_logger.LogInformation($"Handle({nameof(CustomerAddCommandHandler)}) -> {command}");
 
-			var customer = Customer.CreateNew(request.Id, request.FirstName, request.LastName, request.CustomerFrom, request.BankAccount);
+			var customer = Customer.CreateNew(command.Id, command.FirstName, command.LastName, command.CustomerFrom, command.BankAccount);
 			var result = _repository.Add(customer);
 
-			_mediator.Publish(new CustomerAddedEvent(request.Id)); 
+			await _mediator.Publish(Apply(command)); 
 
 
 			return result;
-		}		
+		}
+
+		private CustomerAddedEvent Apply(CustomerAddCommand command)
+		{
+			if (command == null)
+			{
+				throw new System.ArgumentNullException(nameof(command));
+			}
+
+			return new CustomerAddedEvent(command.Id);			
+		}
 	}
 }

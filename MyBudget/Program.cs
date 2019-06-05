@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace MyBudget
+namespace MyBudget.Web
 {
 	public class Program
 	{

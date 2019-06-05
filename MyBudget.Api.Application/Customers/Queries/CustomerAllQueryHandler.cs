@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Api.Application.Queries
 {
-	public class CustomerAllQueryHandler : IRequestHandler<CustomerAllQuery, IEnumerable<CustomerAllQueryResult>>
+	public class CustomerAllQueryHandler : IRequestHandler<CustomerAllQuery, IEnumerable<CustomerAllViewModel>>
 	{
 		private readonly ILogger _logger;
 		private readonly IDataReadonlyRepository<Customer> _repository;
@@ -21,12 +21,12 @@ namespace MyBudget.Api.Application.Queries
 			_repository = repository;
 		}
 
-		public async Task<IEnumerable<CustomerAllQueryResult>> Handle(CustomerAllQuery request, CancellationToken cancellationToken)
+		public async Task<IEnumerable<CustomerAllViewModel>> Handle(CustomerAllQuery query, CancellationToken cancellationToken)
 		{
-			_logger.LogInformation($"{nameof(CustomerAllQueryHandler)}.Handle({request})");
+			_logger.LogInformation($"{nameof(CustomerAllQueryHandler)}.Handle({query})");
 			// var customers = _repository.FindAll("SELECT Id, FirstName, LastName FROM Customers").Result;
 			var customers = await _repository.FindAll();
-			var list = customers.Select(c => new CustomerAllQueryResult(c.Id, $"{c.FirstName} {c.LastName}", c.BankAccount));
+			var list = customers.Select(c => new CustomerAllViewModel(c.Id, $"{c.FirstName} {c.LastName}", c.BankAccount));
 
 			return list;
 		}

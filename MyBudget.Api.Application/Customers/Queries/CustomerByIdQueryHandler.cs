@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Api.Application.Customers.Queries
 {
-	public class CustomerByIdQueryHandler : IRequestHandler<CustomerByIdQuery, CustomerByIdQueryResult>
+	public class CustomerByIdQueryHandler : IRequestHandler<CustomerByIdQuery, CustomerByIdViewModel>
 	{
 		private readonly ILogger _logger;
 		private readonly IDataReadonlyRepository<Customer> _repository;
@@ -18,13 +18,18 @@ namespace MyBudget.Api.Application.Customers.Queries
 			_repository = repository;
 		}
 
-		public async Task<CustomerByIdQueryResult> Handle(CustomerByIdQuery request, CancellationToken cancellationToken)
+		public async Task<CustomerByIdViewModel> Handle(CustomerByIdQuery query, CancellationToken cancellationToken)
 		{
-			_logger.LogInformation($"{nameof(CustomerByIdQueryResult)}.Handle({request})");
+			_logger.LogInformation($"{nameof(CustomerByIdViewModel)}.Handle({query})");
 
-			var customer = await _repository.FindOne(request.Id);
+			var customer = await _repository.FindOne(query.Id);
 			if (customer != null)
-				return new CustomerByIdQueryResult(request.Id, customer.FirstName, customer.LastName, customer.CustomerFrom, customer.BankAccount, customer.Active);
+				return new CustomerByIdViewModel(query.Id,
+									   customer.FirstName,
+									   customer.LastName,
+									   customer.CustomerFrom,
+									   customer.BankAccount,
+									   customer.Active);
 			else
 				return null;
 		}

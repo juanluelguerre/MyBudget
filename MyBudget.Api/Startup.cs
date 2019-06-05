@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Marten;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -6,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MyBudget.Api.Application.Customers.Aggregates;
 using MyBudget.Api.Application.Customers.Data;
 using MyBudget.Api.Application.Customers.Infrastructure;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.IO;
 
 namespace MyBudget.Api
@@ -39,7 +42,6 @@ namespace MyBudget.Api
 			//});
 
 			
-
 			services.AddDbContext<DataContext>(
 				  opt => opt.UseInMemoryDatabase("MyBudget")
 					.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
@@ -47,8 +49,10 @@ namespace MyBudget.Api
 			//services.AddScoped<IDataReadonlyRepository<Customer>>(
 			//	(x) => new DataReadonlyRepository<Customer>($@"Server=(LocalDB)\MSSQLLocalDB; Integrated Security=true ;AttachDbFileName={Directory.GetCurrentDirectory()}\MyBudget.mdf"));
 
+			services.AddScoped((x) => GetDocumentStore());
+
 			services.AddScoped<IDataReadonlyRepository<Customer>>(
-				(x) => new DataReadonlyRepository<Customer>(Configuration.GetConnectionString("MyBudget")));
+				(x) => new DataReadonlyRepository<Customer>(Configuration.GetConnectionString("CommandDatabase")));
 
 			services.AddScoped<DataContext>();
 			services.AddScoped<IDataRepository<Customer>, DataRepository<Customer>>();
@@ -96,6 +100,19 @@ namespace MyBudget.Api
 			app.UseHttpsRedirection();
 			app.UseAuthentication();
 			app.UseMvc();
+		}
+
+		private IDocumentStore GetDocumentStore()
+		{
+			const string SCHEMA_NAME = "EventStore";
+
+			return DocumentStore.For(options =>
+			{
+				options.Connection(Configuration.GetConnectionString("EventStore"));
+				options.AutoCreateSchemaObjects = AutoCreate.All;
+				options.DatabaseSchemaName = SCHEMA_NAME;
+				options.Events.DatabaseSchemaName = SCHEMA_NAME;				
+			});
 		}
 	}
 }

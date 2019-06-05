@@ -2,7 +2,7 @@
 
 namespace MyBudget.Api.Application.Customers.Aggregates
 {
-	public class Budget : Entity
+	public class Budget : AggregateRoot
 	{
 
 	}
