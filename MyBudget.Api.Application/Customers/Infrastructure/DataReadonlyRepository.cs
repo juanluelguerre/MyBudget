@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MyBudget.Api.Application.Customers.Aggregates;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Api.Application.Customers.Infrastructure
 {
-	public class DataReadonlyRepository<T> : IDataReadonlyRepository<T>
+	public class DataReadonlyRepository<T> : IDataReadonlyRepository<T> where T : AggregateRoot
 	{
 		private readonly string _connectionString;
 

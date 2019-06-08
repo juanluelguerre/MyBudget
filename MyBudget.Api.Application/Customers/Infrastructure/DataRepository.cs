@@ -33,5 +33,10 @@ namespace MyBudget.Api.Application.Customers.Infrastructure
 			var result = _context.SaveChanges();
 			return result > 0;
 		}
+
+		public int ExecuteQuery(string query, params object[] parameters)
+		{
+			return _context.Database.ExecuteSqlCommand(query, parameters);
+		}
 	}
 }

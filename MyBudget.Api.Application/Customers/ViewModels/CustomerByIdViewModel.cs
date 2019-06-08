@@ -22,7 +22,7 @@ namespace MyBudget.Api.Application.Customers.Queries
 			FirstName = firstName ?? throw new ArgumentNullException(nameof(firstName));
 			LastName = lastName ?? throw new ArgumentNullException(nameof(lastName));
 			CustomerFrom = customerFrom ?? throw new ArgumentNullException(nameof(customerFrom));
-			BankAccount = bankAccount ?? throw new ArgumentNullException(nameof(bankAccount));
+			BankAccount = string.IsNullOrWhiteSpace(bankAccount) ? throw new ArgumentNullException(nameof(bankAccount)) : bankAccount;
 			Active = active;
 		}
 	}

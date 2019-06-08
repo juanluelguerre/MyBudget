@@ -25,6 +25,7 @@ namespace MyBudget.Api.Controllers
 		[Produces(typeof(IEnumerable<CustomerAllViewModel>))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> Get()
 		{
 			var customers = await _mediator.Send(new CustomerAllQuery());			
@@ -35,6 +36,7 @@ namespace MyBudget.Api.Controllers
 		[Produces(typeof(CustomerByIdViewModel))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> Get(int id)
 		{
 			var query = new CustomerByIdQuery { Id = id };
@@ -47,41 +49,70 @@ namespace MyBudget.Api.Controllers
 		}
 
 		[HttpPost]
-		[Produces(typeof(CustomerModel))]
+		[Produces(typeof(bool))]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> Post([FromBody] CustomerModel customer)
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> Post([FromBody] CustomerRequest customer)
 		{
-			var customerCommand = new CustomerAddCommand(customer.Id,
+			var customerAddCommand = new CustomerAddCommand(customer.Id,
 												customer.FirstName,
 												customer.LastName,
 												customer.BirthDay,
-												customer.BankAccount,
 												customer.CustomerFrom,
 												customer.Active,
-												true);			
-			var result = await _mediator.Send(customerCommand);
-			return Ok(result);
+												true);
+			var added = await _mediator.Send(customerAddCommand);
+			var accountAdded = await AccountSendIfExists(customer.Id, customer.BankAccount, true);
+			return Ok(added &&  accountAdded);
 		}
 
 		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public void Put(int id, [FromBody] string value)
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> Put(int id, [FromBody] CustomerRequest customer)
 		{
-			// For more information on protecting this API from Cross Site Request Forgery (CSRF) attacks, see https://go.microsoft.com/fwlink/?LinkID=717803
+			if (id == customer.Id && TryValidateModel(customer))
+			{
+				var customerCommand = new CustomerUpdateCommand(customer.Id,
+												customer.FirstName,
+												customer.LastName,
+												customer.BirthDay);
+				var updated = await _mediator.Send(customerCommand);
+				var accountAdded = await AccountSendIfExists(customer.Id, customer.BankAccount, true);
+				return Ok(updated && accountAdded);
+			}
+
+			return BadRequest(customer);
 		}
 
 		[HttpDelete("{id}")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-
-		public void Delete(int id)
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> Delete(int id)
 		{
-			// For more information on protecting this API from Cross Site Request Forgery (CSRF) attacks, see https://go.microsoft.com/fwlink/?LinkID=717803
+			var command = new CustomerDeleteCommand(id);
+			var result = await _mediator.Send(command);
+			return Ok(result);
+		}
+
+		private async Task<bool> AccountSendIfExists(int id, string bankAccount, bool markAsDefefault)
+		{
+			var exists = false;
+			var accountAdded = false;
+			if (!string.IsNullOrWhiteSpace(bankAccount))
+			{
+				exists = true;
+				var customerAccountCommand = new CustomerAccountAddCommand(id, bankAccount, markAsDefefault);
+				accountAdded = await _mediator.Send(customerAccountCommand);
+			}
+
+			return accountAdded ^ exists;
 		}
 	}
 }

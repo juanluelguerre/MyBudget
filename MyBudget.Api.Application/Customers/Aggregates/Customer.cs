@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MyBudget.Api.Application.Customers.Aggregates
 {
@@ -7,7 +8,7 @@ namespace MyBudget.Api.Application.Customers.Aggregates
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public DateTime? CustomerFrom { get; set; }
-		public string BankAccount { get; set; }
+		public ICollection<CustomerAccount> BankAccounts { get; set; }
 		public bool Active { get; private set; }
 
 		public Customer(int id, string firstName, string lastName, DateTime? customerFrom, string bankAccount)
@@ -15,13 +16,21 @@ namespace MyBudget.Api.Application.Customers.Aggregates
 			Id = id;
 			FirstName = firstName;
 			LastName = lastName;
-			BankAccount = bankAccount;
 			CustomerFrom = customerFrom;
+			if (!string.IsNullOrWhiteSpace(bankAccount))
+			{
+				BankAccounts = new List<CustomerAccount> { new CustomerAccount(id, bankAccount, true)};
+			}
 		}
 
 		public static Customer CreateNew(int id, string firstName, string lastName, DateTime? customerFrom, string bankAccount)
 		{
 			return new Customer(id, firstName, lastName, customerFrom, bankAccount);
+		}
+
+		public static Customer CreateNew(int id, string firstName, string lastName, DateTime? customerFrom)
+		{
+			return CreateNew(id, firstName, lastName, customerFrom, null);
 		}
 	}
 }

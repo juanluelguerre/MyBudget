@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 
 namespace MyBudget.Api.Application.Events
 {
@@ -8,6 +9,7 @@ namespace MyBudget.Api.Application.Events
 
 		public CustomerAddedEvent(int id)
 		{
+			if (id <= 0) throw new ArgumentException(nameof(id));
 			Id = id;
 		}		
 	}

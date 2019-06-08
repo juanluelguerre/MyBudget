@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyBudget.Api.Application.Customers.Aggregates;
 using MyBudget.Api.Application.Customers.Infrastructure;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace MyBudget.Api.Application.Customers.Queries
 									   customer.FirstName,
 									   customer.LastName,
 									   customer.CustomerFrom,
-									   customer.BankAccount,
+									   customer.BankAccounts.First(b => b.MarkAsDefault).BankAccount,
 									   customer.Active);
 			else
 				return null;

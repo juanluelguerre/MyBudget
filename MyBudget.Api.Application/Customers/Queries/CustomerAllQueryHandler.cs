@@ -26,7 +26,10 @@ namespace MyBudget.Api.Application.Queries
 			_logger.LogInformation($"{nameof(CustomerAllQueryHandler)}.Handle({query})");
 			// var customers = _repository.FindAll("SELECT Id, FirstName, LastName FROM Customers").Result;
 			var customers = await _repository.FindAll();
-			var list = customers.Select(c => new CustomerAllViewModel(c.Id, $"{c.FirstName} {c.LastName}", c.BankAccount));
+			var list = customers.Select(c => new CustomerAllViewModel(
+				c.Id, 
+				$"{c.FirstName} {c.LastName}", 
+				c.BankAccounts.First(b => b.MarkAsDefault).BankAccount));
 
 			return list;
 		}

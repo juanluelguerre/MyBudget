@@ -25,11 +25,10 @@ namespace MyBudget.Api.Application.Customers.Commands
 		{
 			_logger.LogInformation($"Handle({nameof(CustomerAddCommandHandler)}) -> {command}");
 
-			var customer = Customer.CreateNew(command.Id, command.FirstName, command.LastName, command.CustomerFrom, command.BankAccount);
+			var customer = Customer.CreateNew(command.Id, command.FirstName, command.LastName, command.CustomerFrom);
 			var result = _repository.Add(customer);
 
-			await _mediator.Publish(Apply(command)); 
-
+			await _mediator.Publish(Apply(command)); 			
 
 			return result;
 		}
@@ -41,7 +40,7 @@ namespace MyBudget.Api.Application.Customers.Commands
 				throw new System.ArgumentNullException(nameof(command));
 			}
 
-			return new CustomerAddedEvent(command.Id);			
+			return new CustomerAddedEvent(command.Id /* TODO: ADD more detail for events */);			
 		}
 	}
 }

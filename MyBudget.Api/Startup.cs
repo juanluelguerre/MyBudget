@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using MyBudget.Api.Application.Customers.Aggregates;
 using MyBudget.Api.Application.Customers.Data;
 using MyBudget.Api.Application.Customers.Infrastructure;
+using MyBudget.Api.Application.Customers.Infrastructure.Mocks;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
@@ -47,15 +48,15 @@ namespace MyBudget.Api
 					.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
 
 			//services.AddScoped<IDataReadonlyRepository<Customer>>(
-			//	(x) => new DataReadonlyRepository<Customer>($@"Server=(LocalDB)\MSSQLLocalDB; Integrated Security=true ;AttachDbFileName={Directory.GetCurrentDirectory()}\MyBudget.mdf"));
+			//	(x) => new DataReadonlyRepository<Customer>(Configuration.GetConnectionString("QueriesDatabase")));
+			services.AddScoped<IDataReadonlyRepository<Customer>>(
+				(x) => new DataReadonlyRepositoryCustomerMock(Configuration.GetConnectionString("QueriesDatabase")));
 
 			services.AddScoped((x) => GetDocumentStore());
 
-			services.AddScoped<IDataReadonlyRepository<Customer>>(
-				(x) => new DataReadonlyRepository<Customer>(Configuration.GetConnectionString("CommandDatabase")));
-
 			services.AddScoped<DataContext>();
 			services.AddScoped<IDataRepository<Customer>, DataRepository<Customer>>();
+			services.AddScoped<IDataRepository<CustomerAccount>, DataRepository<CustomerAccount>>();
 			services.AddScoped<IDataRepository<Budget>, DataRepository<Budget>>();
 
 			services.AddMediatR(typeof(MyBudget.Api.Application.Customers.Aggregates.Budget));
@@ -106,13 +107,17 @@ namespace MyBudget.Api
 		{
 			const string SCHEMA_NAME = "EventStore";
 
-			return DocumentStore.For(options =>
+			var store = DocumentStore.For(options =>
 			{
 				options.Connection(Configuration.GetConnectionString("EventStore"));
 				options.AutoCreateSchemaObjects = AutoCreate.All;
 				options.DatabaseSchemaName = SCHEMA_NAME;
-				options.Events.DatabaseSchemaName = SCHEMA_NAME;				
+				options.Events.DatabaseSchemaName = SCHEMA_NAME;
+
+				// options.Events.InlineProjections.AggregateStreamsWith<XXXX>();
 			});
+
+			return store;
 		}
 	}
 }

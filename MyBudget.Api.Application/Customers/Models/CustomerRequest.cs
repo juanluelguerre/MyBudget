@@ -2,7 +2,7 @@
 
 namespace MyBudget.Api.Application.Customers.Models
 {
-	public class CustomerModel
+	public class CustomerRequest
 	{
 		public int Id { get; set; }
 		public string FirstName { get; set; }

@@ -12,7 +12,7 @@ namespace MyBudget.Api.Application.Customers.Queries
 		{
 			Id = id;
 			FullName = fullName ?? throw new ArgumentNullException(nameof(fullName));
-			BankAccount = bankAccount ?? throw new ArgumentNullException(nameof(bankAccount));
+			BankAccount = string.IsNullOrWhiteSpace(bankAccount) ? throw new ArgumentNullException(nameof(bankAccount)) : bankAccount;
 		}
 	}
 }

@@ -17,10 +17,11 @@ namespace MyBudget.Api.Application.Customers.Data
 		{
 			modelBuilder.Entity<Person>().ToTable("People");
 			modelBuilder.Entity<Customer>().ToTable("Customers");
+			modelBuilder.Entity<CustomerAccount>().ToTable("CustomerAccounts");
 			modelBuilder.Entity<Budget>().ToTable("Budgets");
 
-			//modelBuilder.Entity<Bank>().HasKey(b => new { b.Id, b.CustomerId });
-
+			modelBuilder.Entity<CustomerAccount>().HasKey(c => new { c.Id, c.BankAccount });
+			modelBuilder.Entity<Customer>().HasMany(c => c.BankAccounts);
 		}
 	}
 }

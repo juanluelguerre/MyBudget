@@ -1,17 +1,16 @@
 ﻿using Marten;
-using Marten.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MyBudget.Api.Application.Customers.Data;
 using MyBudget.Api.Application.Events;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyBudget.Api.Application.Customers.Events
 {
-	public class CustomerEventsHandler : 
-		INotificationHandler<CustomerAddedEvent>, 
-		INotificationHandler<CustomerUpdatedEvent>		
+	public class CustomerEventsHandler :
+		INotificationHandler<CustomerAddedEvent>,
+		INotificationHandler<CustomerUpdatedEvent>,
+		INotificationHandler<CustomerAccountAddedEvent>
 	{
 		private readonly ILogger _logger;
 		private readonly IDocumentStore _eventStore;
@@ -26,19 +25,30 @@ namespace MyBudget.Api.Application.Customers.Events
 
 		public async Task Handle(CustomerAddedEvent @event, CancellationToken cancellationToken)
 		{
-			// TODO: save event
-			// Use StreamStone (https://github.com/yevhen/Streamstone) to save them into Azure Table Storage
-
-
-			await Task.CompletedTask;
+			await Save(@event);			
 		}
 
 		public async Task Handle(CustomerUpdatedEvent @event, CancellationToken cancellationToken)
 		{
-			// TODO: save event
-			// Use StreamStone (https://github.com/yevhen/Streamstone) to save them into Azure Table Storage// TODO: save event
+			await Save(@event);			
+		}
 
-			await Task.CompletedTask;
-		}		
+		public async Task Handle(CustomerAccountAddedEvent @event, CancellationToken cancellationToken)
+		{
+			await Save(@event);	
+		}
+
+		private async Task Save(object @event)
+		{
+			_logger.LogInformation($"Saving event {@event}");
+
+			using (var session = _eventStore.OpenSession())
+			{
+				session.Store(@event);
+				await session.SaveChangesAsync();
+			}
+
+			_logger.LogInformation($"Event saved !");
+		}
 	}
 }
