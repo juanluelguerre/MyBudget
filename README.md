@@ -13,6 +13,7 @@ Is a SAMPLE API App using CQRS + Event Sourcing and DDD using following library:
 
 
 **Application project** group by Domain (Customers and Accounts):
+- [Serilog](https://serilog.net/)
 - [Swagger](https://docs.microsoft.com/es-es/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-2.2&tabs=visual-studio)
 - Entity Framework Core for Commands.
 - [Dapper](https://github.com/StackExchange/Dapper/tree/master/Dapper) for Queries
@@ -43,3 +44,19 @@ All those new Patterns, Tools and Platforms, will be Blog Post entries in [elGue
 7. Save Events to Azure  [Streamstone](https://github.com/yevhen/Streamstone)
 8. [Terraform](https://www.terraform.io/)
 
+
+# Runnng the App
+1. Docker for MySQL:
+`
+.\deplo\mysql\start.cmd
+`
+2. Docker for PostgreSQL:
+`
+.\deploy\postgres\start.cmd
+`
+3. Run Entity Framework Migration: 
+```
+cd MyBudet\Api.Application.
+dotnet ef migrations add Init --startup-project ..\MyBudget.Api\MyBudget.Api.csproj
+dotnet ef database update --startup-project ..\MyBudget.Api\MyBudget.Api.csproj
+``` 

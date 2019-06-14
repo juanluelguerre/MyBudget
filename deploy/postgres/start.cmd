@@ -3,6 +3,8 @@
 REM The actual image is tiny (applies an init script to an existing image), so
 REM just rebuild on every restart in case the repo has updated. This way users
 REM  never have to worry about it.
+echo BUILDING postgres ...
+
 docker build -t marten-postgres .
 docker rm -f marten-db
 REM  Use a unique-ish port in case other psql instances are running

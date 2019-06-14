@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBudget.Api.Application.Customers.Data;
@@ -31,21 +30,12 @@ namespace MyBudget.Api
 			//services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
 			//	.AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
 
-			//services.AddAntiforgery(options =>
-			//{
-			//	// Set Cookie properties using CookieBuilder properties†.
-			//	options.FormFieldName = "AntiforgeryFieldname";
-			//	options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
-			//	options.SuppressXFrameOptionsHeader = false;
-			//});
+			//services.AddDbContext<DataContext>(
+			//	  opt => opt.UseInMemoryDatabase("MyBudget")
+			//		.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
 
 			services.AddDbContext<DataContext>(
-				  opt => opt.UseInMemoryDatabase("MyBudget")
-					.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
-
-			//services.AddDbContext<DataContext>(
-			//	(ops) => ops.UseMySql(Configuration.GetConnectionString("MyBudget")));
-
+				(ops) => ops.UseMySql(Configuration.GetConnectionString("MyBudget")));
 
 			services.AddScoped<IDataReadonlyService<Customer>>(
 				(_) => new DataReadonlyRepositoryCustomerMock(Configuration.GetConnectionString("QueriesDatabase")));
@@ -58,6 +48,7 @@ namespace MyBudget.Api
 			services.AddScoped<IDataService<Budget>, DataRepository<Budget>>();
 
 			services.AddMediatR(typeof(Budget));
+			services.AddEntityFrameworkMySql();
 
 			// Add Swagger
 			services.AddSwaggerGen(options =>

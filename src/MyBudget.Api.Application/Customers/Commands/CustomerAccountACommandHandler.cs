@@ -4,6 +4,7 @@ using MyBudget.Api.Application.Customers.Domain.Aggregates;
 using MyBudget.Api.Application.Customers.Domain.Interfaces;
 using MyBudget.Api.Application.Customers.Events;
 using MyBudget.Api.Application.Customers.Infrastructure;
+using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace MyBudget.Api.Application.Customers.Commands
 
 			var account = CustomerAccount.CreateNew(command.Id, command.BankAccount, command.MarkAsDefault);
 			
-			_dataService.ExecuteQuery("UPDATE MarkAsDerault = false FROM CustomerAccounts WHERE Id = @id", new SqlParameter("@id", command.Id));
+			_dataService.ExecuteQuery("UPDATE CustomerAccounts set MarkAsDefault = 0 WHERE Id = @id", new MySqlParameter("@id", command.Id));
 			var result = _dataService.Add(account);
 
 			await _mediator.Publish(Apply(command)); 			

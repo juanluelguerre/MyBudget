@@ -1,7 +1,7 @@
-echo off
+@echo off
 
 REM https://platzi.com/tutoriales/1432-docker/3268-como-crear-un-contenedor-con-docker-mysql-y-persistir-la-informacion/
-echo BUILDING...
+echo BUILDING mysql ...
 
 docker build -t mysql-db .
 docker rm -f mysql-db
