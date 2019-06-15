@@ -26,6 +26,7 @@ bld/
 
 #NDepend
 [Nn][Dd]epend[Oo]ut/
+[Cc][Ss]Proj/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
