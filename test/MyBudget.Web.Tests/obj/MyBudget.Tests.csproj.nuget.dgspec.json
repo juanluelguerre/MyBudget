@@ -1,0 +1,94 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget.Tests\\MyBudget.Tests.csproj": {}
+  },
+  "projects": {
+    "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget.Tests\\MyBudget.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget.Tests\\MyBudget.Tests.csproj",
+        "projectName": "MyBudget.Tests",
+        "projectPath": "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget.Tests\\MyBudget.Tests.csproj",
+        "packagesPath": "C:\\Users\\jguerrmi\\.nuget\\packages\\",
+        "outputPath": "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget.Tests\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Dev\\NuGet.Config",
+          "C:\\Users\\jguerrmi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Dev\\Dentsu\\TrackingSystem\\src\\Dentsu.Tracking.Services.AWS\\bin\\Release": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dentsutracking.pkgs.visualstudio.com/_packaging/eu-components/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {
+              "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget\\MyBudget.Web.csproj": {
+                "projectPath": "C:\\Dev\\MyBudget\\test\\UnitTests\\MyBudget\\MyBudget.Web.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.AspNetCore.Mvc.RazorPages": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.0.1, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.10.1, )"
+            },
+            "coverlet.msbuild": {
+              "target": "Package",
+              "version": "[2.6.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.1, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.4.1, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
