@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using MyBudget.Api.Application.Customers.Domain.Aggregates;
 using MyBudget.Api.Application.Customers.Domain.Interfaces;
-using MyBudget.Api.Application.Customers.Infrastructure;
 using MyBudget.Api.Application.Customers.Queries;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +29,7 @@ namespace MyBudget.Api.Application.Queries
 			var list = customers.Select(c => new CustomerAllViewModel(
 				c.Id, 
 				$"{c.FirstName} {c.LastName}", 
-				c.BankAccounts.First(b => b.MarkAsDefault).BankAccount));
+				c.BankAccounts?.First(b => b.MarkAsDefault).BankAccount));
 
 			return list;
 		}

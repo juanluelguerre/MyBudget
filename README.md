@@ -60,3 +60,5 @@ cd MyBudet\Api.Application.
 dotnet ef migrations add Init --startup-project ..\MyBudget.Api\MyBudget.Api.csproj
 dotnet ef database update --startup-project ..\MyBudget.Api\MyBudget.Api.csproj
 ``` 
+# Bugs and Issues found during Development 
+- [EF Core and MySQL](https://twitter.com/JuanluElGuerre/status/1140333496751284229)

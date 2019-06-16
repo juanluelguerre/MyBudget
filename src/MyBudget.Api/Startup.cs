@@ -32,13 +32,15 @@ namespace MyBudget.Api
 
 			//services.AddDbContext<DataContext>(
 			//	  opt => opt.UseInMemoryDatabase("MyBudget")
-			//		.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
+			//		.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));			
 
+			// EF Connnection
 			services.AddDbContext<DataContext>(
-				(ops) => ops.UseMySql(Configuration.GetConnectionString("MyBudget")));
+				(ops) => ops.UseMySQL(Configuration.GetConnectionString("MyBudget")));
 
+			// Dapper Connection
 			services.AddScoped<IDataReadonlyService<Customer>>(
-				(_) => new DataReadonlyRepositoryCustomerMock(Configuration.GetConnectionString("QueriesDatabase")));
+				(_) => new DataReadonlyRepository<Customer>(Configuration.GetConnectionString("MyBudget")));
 
 			services.AddScoped((x) => GetDocumentStore());
 
@@ -47,8 +49,7 @@ namespace MyBudget.Api
 			services.AddScoped<IDataService<CustomerAccount>, DataRepository<CustomerAccount>>();
 			services.AddScoped<IDataService<Budget>, DataRepository<Budget>>();
 
-			services.AddMediatR(typeof(Budget));
-			services.AddEntityFrameworkMySql();
+			services.AddMediatR(typeof(Budget));			
 
 			// Add Swagger
 			services.AddSwaggerGen(options =>

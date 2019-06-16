@@ -1,9 +1,10 @@
 ﻿using Dapper;
+using MyBudget.Api.Application.Customers.Data;
 using MyBudget.Api.Application.Customers.Domain.Aggregates;
 using MyBudget.Api.Application.Customers.Domain.Interfaces;
+using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace MyBudget.Api.Application.Customers.Infrastructure
 		{
 			get
 			{
-				return new SqlConnection(_connectionString);
+				return new MySqlConnection(_connectionString);
 			}
 		}
 
@@ -61,8 +62,25 @@ namespace MyBudget.Api.Application.Customers.Infrastructure
 			var props = t.GetProperties(BindingFlags.Public | BindingFlags.Instance);			
 
 			var fields = props.Select(p => $"{p.Name}").ToList();
-			
-			return $"SELECT {string.Join(",", fields)} FROM {t.Name}";
+
+			var tableName = t.Name;
+			switch (tableName)
+			{
+				//case nameof(Person):
+				//	tableName = DataContext.TABLE_PERSON;
+				//	break;
+				case nameof(Customer):
+					// TODO: Query/Table doesn't have some Fields
+					fields.Remove(nameof(Customer.BankAccounts));
+					break;
+				case nameof(CustomerAccount):
+					tableName = DataContext.TABLE_CUSTOMER_ACCOUNT;
+					break;
+				default:
+					break;
+			}
+
+			return $"SELECT {string.Join(",", fields)} FROM {tableName}s";
 		}
 	}
 }
