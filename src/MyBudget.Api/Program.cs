@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Serilog;
-using Serilog.Events;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace MyBudget.Api
 {
@@ -9,28 +14,11 @@ namespace MyBudget.Api
 	{
 		public static void Main(string[] args)
 		{
-			Log.Logger = new LoggerConfiguration()
-			.Enrich.FromLogContext()
-			.MinimumLevel.Debug()
-			.WriteTo.ColoredConsole(
-				LogEventLevel.Debug,
-				"{NewLine}{Timestamp:HH:mm:ss} [{Level}] ({CorrelationToken}) {Message}{NewLine}{Exception}")
-				.CreateLogger();
-
-			try
-			{
-				CreateWebHostBuilder(args).Build().Run();
-			}
-			finally
-			{
-				// Close and flush the log.
-				Log.CloseAndFlush();
-			}
+			CreateWebHostBuilder(args).Build().Run();
 		}
 
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
-				.UseSerilog()
 				.UseStartup<Startup>();
 	}
 }

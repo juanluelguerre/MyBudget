@@ -1,17 +1,13 @@
-﻿using Marten;
-using MediatR;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MyBudget.Api.Application.Customers.Data;
-using MyBudget.Api.Application.Customers.Domain.Aggregates;
-using MyBudget.Api.Application.Customers.Domain.Interfaces;
-using MyBudget.Api.Application.Customers.Infrastructure;
-using MyBudget.Api.Application.Customers.Infrastructure.Mocks;
-using Swashbuckle.AspNetCore.Swagger;
+using MyBudget.Api.Infrastructure;
+using System;
+using System.Reflection;
 
 namespace MyBudget.Api
 {
@@ -27,45 +23,11 @@ namespace MyBudget.Api
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			//services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
-			//	.AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+			
 
-			//services.AddDbContext<DataContext>(
-			//	  opt => opt.UseInMemoryDatabase("MyBudget")
-			//		.ConfigureWarnings(cw => cw.Ignore(InMemoryEventId.TransactionIgnoredWarning)));			
-
-			// EF Connnection
-			services.AddDbContext<DataContext>(
-				(ops) => ops.UseMySQL(Configuration.GetConnectionString("MyBudget")));
-
-			// Dapper Connection
-			services.AddScoped<IDataReadonlyService<Customer>>(
-				(_) => new DataReadonlyRepository<Customer>(Configuration.GetConnectionString("MyBudget")));
-
-			services.AddScoped((x) => GetDocumentStore());
-
-			services.AddScoped<DataContext>();
-			services.AddScoped<IDataService<Customer>, DataRepository<Customer>>();
-			services.AddScoped<IDataService<CustomerAccount>, DataRepository<CustomerAccount>>();
-			services.AddScoped<IDataService<Budget>, DataRepository<Budget>>();
-
-			services.AddMediatR(typeof(Budget));			
-
-			// Add Swagger
-			services.AddSwaggerGen(options =>
-			{
-				options.SwaggerDoc("v1",
-					new Info
-					{
-						Version = "v1.0.0",
-						Title = "MyBudget API",
-						Description = "API to expose MyBudget logic",
-						TermsOfService = ""
-					}
-				);
-			});
-
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+			services
+			.AddCustomMVC()
+			.AddCustomDbContext(Configuration);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,33 +43,55 @@ namespace MyBudget.Api
 				app.UseHsts();
 			}
 
-			app.UseSwagger()
-				.UseSwaggerUI(c =>
-				{
-					c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyBudget v1.0.0");
-				});
-
-
 			app.UseHttpsRedirection();
-			app.UseAuthentication();
 			app.UseMvc();
 		}
+	}
 
-		private IDocumentStore GetDocumentStore()
+	internal static class CustomExtensionMethods
+	{
+		private const string DATABASE_CONNECIONSTRING = "DataBaseConnection";
+
+		public static IServiceCollection AddCustomMVC(this IServiceCollection services)
 		{
-			const string SCHEMA_NAME = "EventStore";
+			services.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-			var store = DocumentStore.For(options =>
+			return services;
+		}
+
+		public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.AddDbContext<DataContext>(options =>
 			{
-				options.Connection(Configuration.GetConnectionString("EventStore"));
-				options.AutoCreateSchemaObjects = AutoCreate.All;
-				options.DatabaseSchemaName = SCHEMA_NAME;
-				options.Events.DatabaseSchemaName = SCHEMA_NAME;
+				var dbInMemory = configuration.GetValue<bool>("DBInMemory");
 
-				// options.Events.InlineProjections.AggregateStreamsWith<XXXX>();
+				if (dbInMemory)
+				{
+					options.UseInMemoryDatabase("Budget",
+						(ops) =>
+						{
+
+						});
+				}
+				else
+				{
+					options.UseSqlServer(configuration.GetConnectionString(DATABASE_CONNECIONSTRING),
+										 sqlServerOptionsAction: sqlOptions =>
+										 {
+											 sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+											 //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
+											 sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+										 });
+
+					// Changing default behavior when client evaluation occurs to throw. 
+					// Default in EF Core would be to log a warning when client evaluation is performed.
+					options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
+					//Check Client vs. Server evaluation: https://docs.microsoft.com/en-us/ef/core/querying/client-eval
+				}
 			});
 
-			return store;
+			return services;
 		}
 	}
 }

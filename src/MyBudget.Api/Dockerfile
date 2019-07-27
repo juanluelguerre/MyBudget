@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY ["MyBudget.Api/MyBudget.Api.csproj", "MyBudget.Api/"]
-RUN dotnet restore "MyBudget.Api/MyBudget.Api.csproj"
+COPY ["src/MyBudget.Api/MyBudget.Api.csproj", "src/MyBudget.Api/"]
+RUN dotnet restore "src/MyBudget.Api/MyBudget.Api.csproj"
 COPY . .
-WORKDIR "/src/MyBudget.Api"
+WORKDIR "/src/src/MyBudget.Api"
 RUN dotnet build "MyBudget.Api.csproj" -c Release -o /app
 
 FROM build AS publish

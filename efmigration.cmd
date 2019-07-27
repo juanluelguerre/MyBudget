@@ -3,14 +3,14 @@
 cls
 echo.
 
-cd src\MyBudget.Api.Application
+cd src\MyBudget.Customers.Api
 
 echo RUNINNG Migration...
-dotnet ef migrations add Init --startup-project ..\MyBudget.Api\MyBudget.Api.csproj
+dotnet ef migrations add Init 
 
 if %ERRORLEVEL% == 0 (
     echo RUNINNG Database Update...
-    dotnet ef database update --startup-project ..\MyBudget.Api\MyBudget.Api.csproj
+    dotnet ef database update
 ) else (
     echo Error found: No 'database update' started !
 )
