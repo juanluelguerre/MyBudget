@@ -9754,8 +9754,7 @@
       ],
       "sources": {
         "C:\\Dev\\Dentsu\\TrackingSystem\\src\\Dentsu.Tracking.Services.AWS\\bin\\Release": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://pkgs.dev.azure.com/JuanluElGuerre/_packaging/Mutualidad/nuget/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.2": {

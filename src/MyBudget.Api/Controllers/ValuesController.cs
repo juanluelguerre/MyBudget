@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MyBudget.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/v1/[controller]")]
 	[ApiController]
 	public class ValuesController : ControllerBase
 	{
@@ -19,7 +19,7 @@ namespace MyBudget.Api.Controllers
 
 		// GET api/values/5
 		[HttpGet("{id}")]
-		public ActionResult<string> Get(int id)
+		public ActionResult<string> GetById(int id)
 		{
 			return "value";
 		}

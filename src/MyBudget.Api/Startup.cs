@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBudget.Api.Infrastructure;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Reflection;
 
@@ -27,7 +28,8 @@ namespace MyBudget.Api
 
 			services
 			.AddCustomMVC()
-			.AddCustomDbContext(Configuration);
+			.AddCustomDbContext(Configuration)
+			.AddSwagger();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +45,14 @@ namespace MyBudget.Api
 				app.UseHsts();
 			}
 
+			app.UseCors("CorsPolicy");
+
+			app.UseSwagger()
+				.UseSwaggerUI(c =>
+				{
+					c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyBudget v1.0.0");
+				});
+
 			app.UseHttpsRedirection();
 			app.UseMvc();
 		}
@@ -55,7 +65,24 @@ namespace MyBudget.Api
 		public static IServiceCollection AddCustomMVC(this IServiceCollection services)
 		{
 			services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+				.AddControllersAsServices();
+
+			services.AddCors(options =>
+			{
+				options.AddPolicy("CorsPolicy",
+					builder => builder
+					// builder => builder.AllowAnyOrigin()
+					.SetIsOriginAllowed((host) => true)
+					.WithMethods(
+						"GET",
+						"POST",
+						"PUT",
+						"DELETE",
+						"OPTIONS")
+					.AllowAnyHeader()
+					.AllowCredentials());
+			});
 
 			return services;
 		}
@@ -89,6 +116,23 @@ namespace MyBudget.Api
 					options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
 					//Check Client vs. Server evaluation: https://docs.microsoft.com/en-us/ef/core/querying/client-eval
 				}
+			});
+
+			return services;
+		}
+
+		public static IServiceCollection AddSwagger(this IServiceCollection services)
+		{
+			services.AddSwaggerGen(options =>
+			{
+				options.DescribeAllEnumsAsStrings();
+				options.SwaggerDoc("v1", new Info
+				{
+					Version = "v1.0.0",
+					Title = "LoanMe Customers API",
+					Description = "API to expose LoanMe Custumer logic",
+					TermsOfService = ""
+				});
 			});
 
 			return services;
