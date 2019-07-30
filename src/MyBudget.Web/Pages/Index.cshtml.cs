@@ -36,7 +36,7 @@ namespace MyBudget.Web.Pages
 		{
 			if (Total > 0)
 			{			
-				var result =_service.Add(-1, "Manual withdrawal");
+				var result = await _service.Add(-1, "Manual withdrawal");
 				if (result)
 					Total--;
 			}
