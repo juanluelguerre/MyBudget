@@ -15,15 +15,16 @@ namespace MyBudget.Api.Services
 			_logger = logger;
 		}
 
-		public async Task<bool> Add(int value, string desc)
+		public async Task<bool> Add(double value, string desc)
 		{
 			var budget = new Budget() { Amount = value, Description = desc };
 			_context.Budget.Add(budget);
+			await _context.SaveChangesAsync();
 
 			return true;
 		}
 
-		public async Task<bool> Remove(int value, string desc)
+		public async Task<bool> Remove(double value, string desc)
 		{
 			var budget = new Budget() { Amount = (-1) * value, Description = desc };
 			_context.Budget.Add(budget);

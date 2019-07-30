@@ -28,7 +28,8 @@
         ],
         "sources": {
           "C:\\Dev\\Dentsu\\TrackingSystem\\src\\Dentsu.Tracking.Services.AWS\\bin\\Release": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/JuanluElGuerre/_packaging/Mutualidad/nuget/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp2.2": {
@@ -44,6 +45,18 @@
       "frameworks": {
         "netcoreapp2.2": {
           "dependencies": {
+            "AspNetCore.HealthChecks.UI.Client": {
+              "target": "Package",
+              "version": "[2.2.3, )"
+            },
+            "AspNetCore.HealthChecks.Uris": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            },
+            "Microsoft.ApplicationInsights.Kubernetes": {
+              "target": "Package",
+              "version": "[1.0.2, )"
+            },
             "Microsoft.AspNetCore.App": {
               "suppressParent": "All",
               "target": "Package",
@@ -52,6 +65,10 @@
             },
             "Microsoft.AspNetCore.Razor.Design": {
               "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.Extensions.Http.Polly": {
               "target": "Package",
               "version": "[2.2.0, )"
             },
@@ -64,6 +81,10 @@
             "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
               "target": "Package",
               "version": "[1.7.9, )"
+            },
+            "Polly.Extensions.Http": {
+              "target": "Package",
+              "version": "[3.0.0, )"
             }
           },
           "imports": [
@@ -98,7 +119,8 @@
         ],
         "sources": {
           "C:\\Dev\\Dentsu\\TrackingSystem\\src\\Dentsu.Tracking.Services.AWS\\bin\\Release": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/JuanluElGuerre/_packaging/Mutualidad/nuget/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp2.2": {

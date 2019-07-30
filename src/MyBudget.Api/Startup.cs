@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MyBudget.Api.Infrastructure;
+using MyBudget.Api.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Reflection;
@@ -23,13 +27,14 @@ namespace MyBudget.Api
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
-		{
-			
-
+		{			
 			services
 			.AddCustomMVC()
 			.AddCustomDbContext(Configuration)
+			.AddCustomServices(Configuration)
 			.AddSwagger();
+
+			services.AddCustomHealthCheck(Configuration);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +50,19 @@ namespace MyBudget.Api
 				app.UseHsts();
 			}
 
+
+			app.UseHealthChecks("/hc", new HealthCheckOptions()
+			{
+				Predicate = _ => true,
+				ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+			});
+
+			app.UseHealthChecks("/liveness", new HealthCheckOptions
+			{
+				Predicate = r => r.Name.Contains("self")
+			});
+
+			app.UseStaticFiles();
 			app.UseCors("CorsPolicy");
 
 			app.UseSwagger()
@@ -121,6 +139,13 @@ namespace MyBudget.Api
 			return services;
 		}
 
+		public static IServiceCollection AddCustomServices(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.AddTransient<IBudgetService, BudgetService>();
+
+			return services;
+		}
+
 		public static IServiceCollection AddSwagger(this IServiceCollection services)
 		{
 			services.AddSwaggerGen(options =>
@@ -129,11 +154,20 @@ namespace MyBudget.Api
 				options.SwaggerDoc("v1", new Info
 				{
 					Version = "v1.0.0",
-					Title = "LoanMe Customers API",
-					Description = "API to expose LoanMe Custumer logic",
+					Title = "MyBudget API",
+					Description = "API to expose MyBudget logic",
 					TermsOfService = ""
 				});
 			});
+
+			return services;
+		}
+
+		public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
+		{
+			var hcBuilder = services.AddHealthChecks();
+
+			hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 
 			return services;
 		}

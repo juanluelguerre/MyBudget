@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MyBudget.Api.Infrastructure;
+using MyBudget.Api.Services;
 
 namespace MyBudget.Api.Controllers
 {
@@ -10,6 +12,13 @@ namespace MyBudget.Api.Controllers
 	[ApiController]
 	public class ValuesController : ControllerBase
 	{
+		private readonly IBudgetService _service;
+
+		public ValuesController(IBudgetService service)
+		{
+			_service = service;
+		}
+
 		// GET api/values
 		[HttpGet]
 		public ActionResult<IEnumerable<string>> Get()
@@ -17,29 +26,26 @@ namespace MyBudget.Api.Controllers
 			return new string[] { "value1", "value2" };
 		}
 
-		// GET api/values/5
-		[HttpGet("{id}")]
-		public ActionResult<string> GetById(int id)
+		//// GET api/values/5
+		//[HttpGet("{id}")]
+		//public ActionResult<string> GetById(int id)
+		//{
+		//	return "value";
+		//}
+
+		// POST api/values
+		[HttpPost]
+		public void Add([FromBody] Budget value)
 		{
-			return "value";
+			_service.Add(value.Amount, value.Description);
 		}
 
 		// POST api/values
 		[HttpPost]
-		public void Post([FromBody] string value)
+		public void Remove([FromBody] Budget value)
 		{
+			_service.Remove(value.Amount, value.Description);
 		}
 
-		// PUT api/values/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
-		{
-		}
-
-		// DELETE api/values/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
-		{
-		}
 	}
 }
