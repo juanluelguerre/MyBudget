@@ -40,8 +40,8 @@ namespace MyBudget.Api.Controllers
 			_service.Add(value.Amount, value.Description);
 		}
 
-		// POST api/values
-		[HttpPost]
+		// Delete api/values
+		[HttpDelete]
 		public void Remove([FromBody] Budget value)
 		{
 			_service.Remove(value.Amount, value.Description);

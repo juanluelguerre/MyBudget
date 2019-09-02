@@ -69,6 +69,8 @@ namespace MyBudget.Api
 				.UseSwaggerUI(c =>
 				{
 					c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyBudget v1.0.0");
+					// c.SwaggerEndpoint("../swagger/v1/swagger.json", "MyBudget v1.0.0");
+					//c.RoutePrefix = "swagger";
 				});
 
 			app.UseHttpsRedirection();
@@ -153,11 +155,26 @@ namespace MyBudget.Api
 				options.DescribeAllEnumsAsStrings();
 				options.SwaggerDoc("v1", new Info
 				{
-					Version = "v1.0.0",
+					Version = "1.0.0",
 					Title = "MyBudget API",
 					Description = "API to expose MyBudget logic",
 					TermsOfService = ""
 				});
+
+				//
+				// Un-comment to allow authorization
+				//
+				//options.AddSecurityDefinition("Bearer",
+				//   new ApiKeyScheme
+				//   {
+				//	   In = "header",
+				//	   Description = "Please enter into field the word 'Bearer' following by space and JWT",
+				//	   Name = "Authorization",
+				//	   Type = "apiKey"
+				//   });
+				//options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+				//	{ "Bearer", Enumerable.Empty<string>() },
+				//});
 			});
 
 			return services;
